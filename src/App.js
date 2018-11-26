@@ -1,25 +1,32 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import Table from './Table'
 import './App.css';
 
 class App extends Component {
+  state = {
+    tableData: []
+  };
+
+  componentDidMount() {
+    const socket = new WebSocket('wss://dev.tlservers.com:8888/calls'); 
+
+    socket.onmessage = (event) => {
+      const message = event.data;
+      this.setTableData(JSON.parse(message));
+    };
+  }
+
+  setTableData = newData => {
+    this.setState(({ tableData }) => ({ tableData: [newData, ...tableData] }))
+  };
+
   render() {
+    const { tableData } = this.state;
+
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
+        <h1>Tourlane Test</h1>
+        <Table data={tableData}/>
       </div>
     );
   }
